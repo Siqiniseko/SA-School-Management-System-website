@@ -1,0 +1,98 @@
+COMPLETE PROMPT FOR YOUR SCHOOL MANAGEMENT SYSTEM WEBSITE (South Africa)
+
+PROMPT:
+
+“Create a complete, modern South African School Management System website built with HTML, CSS, JavaScript (frontend) and Flask + MySQL (backend).
+The system must support five user roles: Admin, Teacher, Student, Parent, and Accountant.
+
+🔧 System Requirements
+1. Admin Dashboard
+Manage all users (create, edit, delete)
+Manage learners, classes, subjects
+Manage teachers, assign subjects
+Send school-wide notifications
+Manage timetable
+View full reports and analytics
+2. Teacher Dashboard
+Take attendance
+Upload marks and assessments
+Upload learning materials (notes, assignments)
+View list of learners in their classes
+Send notifications to parents
+3. Student Dashboard
+View academic progress
+View timetable
+View attendance record
+Download notes & assignments
+View notifications
+4. Parent Dashboard
+Receive school notifications
+View learner progress (marks, assessments, reports)
+View attendance
+Track outstanding school fees
+Make online school fee payments (Simulated EFT/Credit Card)
+Download receipts
+5. Accountant Dashboard
+Manage fee structures
+View outstanding balances
+Process payments
+View financial reports
+💾 Database Requirements (MySQL)
+
+Include tables for:
+
+Users
+Learners
+Progress/Marks
+Attendance
+Fees & Payments
+Notifications
+Subjects
+Classes
+
+All tables must include proper foreign keys and constraints.
+
+🎨 Frontend Requirements (HTML/CSS/JS)
+Clean, mobile-responsive layout
+South African school theme (e.g., green, navy, gold)
+Modern UI: cards, tables, navigation sidebar
+Parallax landing page with introduction to the school
+Login page for all user roles
+Toast notifications for success/error messages
+Optional light/dark mode
+🚀 Backend (Flask) Requirements
+
+Use Python Flask with:
+
+Role-based authentication
+Session management
+CRUD operations for Admin, Teachers, Accountant
+Secure SQL queries
+Routes for dashboards, fees, progress, attendance, notifications
+JSON API endpoints for AJAX
+Payment simulation endpoint for parents
+🌍 South African Context Requirements
+Use South African Rand (R) for fees
+Include grades following CAPS (R–12)
+Use South African school terminology (e.g., “Learner” instead of “Student”)
+Add a calendar for SA term dates
+Fees must display: “Outstanding Balance”, “Amount Paid”, “Due Date”
+📦 Deliverables
+Full working project folder structure
+All HTML, CSS, and JS files
+Flask backend (app.py)
+MySQL database schema (SQL file)
+README with setup instructions
+Fully running local server
+Demo data for learners, parents, teachers, and accounts
+A polished UI ready for presentation
+🎯 Outcome
+
+A fully functioning School Management System (South Africa) that allows Admins, Teachers, Students, Parents, and Accountants to manage school operations efficiently with dashboards, fee payments, notifications, progress tracking, and a secure login system.
+
+✅ READY TO USE
+
+If you want, I can also generate:
+
+✔ The landing homepage UI
+✔ A presentation pitch for your cla
