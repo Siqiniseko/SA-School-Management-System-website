@@ -16,18 +16,17 @@ export default function AccountantReports() {
   const [year, setYear] = useState<string>(new Date().getFullYear().toString());
 
   const { data: feeSummary, isLoading: summaryLoading } = useGetFeeSummary();
-
-  const { data: fees, isLoading: feesLoading } = useListFees(
-    term === "all" ? {} : { term: parseInt(term) }
-  );
+  const { data: fees, isLoading: feesLoading } = useListFees();
   const { data: payments, isLoading: paymentsLoading } = useListPayments();
 
   const isLoading = summaryLoading || feesLoading || paymentsLoading;
 
-  const filteredFees = fees?.filter(f => f.year === parseInt(year) && (term === "all" || f.term === parseInt(term))) ?? [];
+  const filteredFees = (fees ?? []).filter(f =>
+    f.year === parseInt(year) && (term === "all" || f.term === parseInt(term))
+  );
   const totalBilled = filteredFees.reduce((s, f) => s + f.totalAmount, 0);
-  const totalPaid = filteredFees.reduce((s, f) => s + f.paidAmount, 0);
-  const totalOutstanding = totalBilled - totalPaid;
+  const totalPaid = filteredFees.reduce((s, f) => s + f.amountPaid, 0);
+  const totalOutstanding = filteredFees.reduce((s, f) => s + f.outstandingBalance, 0);
   const collectionRate = totalBilled > 0 ? Math.round((totalPaid / totalBilled) * 100) : 0;
 
   const statusBreakdown = filteredFees.reduce((acc, f) => {

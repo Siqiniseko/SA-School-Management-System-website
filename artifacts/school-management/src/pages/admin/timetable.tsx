@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   useListTimetableEntries, useCreateTimetableEntry, useDeleteTimetableEntry,
   useListClasses, useListSubjects, useListUsers, getListTimetableEntriesQueryKey,
+  TimetableEntry,
 } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export default function AdminTimetable() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const teachers = users?.filter(u => u.role === "teacher") ?? [];
+  const teachers = (users ?? []).filter(u => u.role === "teacher");
 
   const blank = { classId: "", subjectId: "", teacherId: "", dayOfWeek: "Monday", startTime: "07:30", endTime: "08:30", room: "" };
   const [open, setOpen] = useState(false);
@@ -68,10 +69,10 @@ export default function AdminTimetable() {
     } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
   };
 
-  const grouped = DAYS.reduce((acc, day) => {
-    acc[day] = entries?.filter(e => e.dayOfWeek === day) ?? [];
+  const grouped: Record<string, TimetableEntry[]> = DAYS.reduce((acc, day) => {
+    acc[day] = (entries ?? []).filter(e => e.dayOfWeek === day);
     return acc;
-  }, {} as Record<string, typeof entries extends Array<infer U> ? U[] : never[]>);
+  }, {} as Record<string, TimetableEntry[]>);
 
   return (
     <div className="space-y-6">
@@ -100,15 +101,15 @@ export default function AdminTimetable() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {grouped[day]?.length === 0 ? (
+                    {grouped[day].length === 0 ? (
                       <TableRow><TableCell colSpan={6} className="text-center py-4 text-muted-foreground text-sm">No entries for {day}</TableCell></TableRow>
-                    ) : grouped[day]?.sort((a, b) => a.startTime.localeCompare(b.startTime)).map(e => (
+                    ) : [...grouped[day]].sort((a, b) => a.startTime.localeCompare(b.startTime)).map(e => (
                       <TableRow key={e.id}>
                         <TableCell className="font-mono text-sm">{e.startTime} – {e.endTime}</TableCell>
-                        <TableCell>{e.className || `Class ${e.classId}`}</TableCell>
-                        <TableCell>{e.subjectName || `Subject ${e.subjectId}`}</TableCell>
-                        <TableCell>{e.teacherName || "—"}</TableCell>
-                        <TableCell>{e.room || "—"}</TableCell>
+                        <TableCell>{e.className ?? `Class ${e.classId}`}</TableCell>
+                        <TableCell>{e.subjectName ?? `Subject ${e.subjectId}`}</TableCell>
+                        <TableCell>{e.teacherName ?? "—"}</TableCell>
+                        <TableCell>{e.room ?? "—"}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="sm" onClick={() => handleDelete(e.id)}>
                             <Trash2 className="h-4 w-4 text-destructive" />
@@ -135,7 +136,7 @@ export default function AdminTimetable() {
                   <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Select...</SelectItem>
-                    {classes?.map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>)}
+                    {(classes ?? []).map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -145,7 +146,7 @@ export default function AdminTimetable() {
                   <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Select...</SelectItem>
-                    {subjects?.map(s => <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>)}
+                    {(subjects ?? []).map(s => <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useListMaterials, useListLearners } from "@workspace/api-client-react";
+import { useListMaterials, getListMaterialsQueryKey, useListLearners } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,17 +19,18 @@ export default function LearnerMaterials() {
   const { user } = useAuth();
   const { data: allLearners } = useListLearners();
   const myLearner = allLearners?.find(l => l.userId === user?.id);
-  const { data: materials, isLoading } = useListMaterials(
-    myLearner ? { grade: myLearner.grade, classId: myLearner.classId ?? undefined } : undefined,
-    { query: { enabled: !!myLearner } }
-  );
+  const params = myLearner ? { classId: myLearner.classId ?? undefined } : undefined;
+
+  const { data: materials, isLoading } = useListMaterials(params, {
+    query: { queryKey: getListMaterialsQueryKey(params), enabled: !!myLearner },
+  });
 
   if (isLoading) return <div className="grid gap-4 md:grid-cols-2">{[1,2,3,4].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}</div>;
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Learning Materials</h1>
-      {myLearner && <p className="text-muted-foreground">{myLearner.grade} · {myLearner.className || ""}</p>}
+      {myLearner && <p className="text-muted-foreground">{myLearner.grade} · {myLearner.className ?? ""}</p>}
 
       {!materials || materials.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">No materials available yet</CardContent></Card>

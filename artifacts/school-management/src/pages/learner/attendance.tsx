@@ -1,5 +1,5 @@
 import React from "react";
-import { useListAttendance, useGetAttendanceSummary, useListLearners } from "@workspace/api-client-react";
+import { useListAttendance, getListAttendanceQueryKey, useListLearners } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,11 +22,11 @@ export default function LearnerAttendance() {
   const { user } = useAuth();
   const { data: allLearners } = useListLearners();
   const myLearner = allLearners?.find(l => l.userId === user?.id);
+  const params = myLearner ? { learnerId: myLearner.id } : undefined;
 
-  const { data: records, isLoading } = useListAttendance(
-    myLearner ? { learnerId: myLearner.id } : undefined,
-    { query: { enabled: !!myLearner } }
-  );
+  const { data: records, isLoading } = useListAttendance(params, {
+    query: { queryKey: getListAttendanceQueryKey(params), enabled: !!myLearner },
+  });
 
   const present = records?.filter(r => r.status === "present" || r.status === "late").length ?? 0;
   const total = records?.length ?? 0;

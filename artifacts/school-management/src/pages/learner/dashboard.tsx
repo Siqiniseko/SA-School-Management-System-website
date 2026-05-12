@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetLearnerDashboard } from "@workspace/api-client-react";
+import { useGetLearnerDashboard, getGetLearnerDashboardQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,8 +7,9 @@ import { GraduationCap, CheckCircle, BookOpen, Bell } from "lucide-react";
 
 export default function LearnerDashboard() {
   const { user } = useAuth();
-  const { data: dashboard, isLoading } = useGetLearnerDashboard(user?.id ?? 0, {
-    query: { enabled: !!user?.id },
+  const uid = user?.id ?? 0;
+  const { data: dashboard, isLoading } = useGetLearnerDashboard(uid, {
+    query: { queryKey: getGetLearnerDashboardQueryKey(uid), enabled: !!user?.id },
   });
 
   if (isLoading) {
@@ -16,9 +17,7 @@ export default function LearnerDashboard() {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">Learner Overview</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
-          ))}
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}
         </div>
       </div>
     );
@@ -74,8 +73,7 @@ export default function LearnerDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              Recent Marks
+              <BookOpen className="h-5 w-5 text-primary" /> Recent Marks
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -102,20 +100,16 @@ export default function LearnerDashboard() {
 
       {dashboard.timetableToday.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Today's Timetable</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>Today's Timetable</CardTitle></CardHeader>
           <CardContent>
             <div className="divide-y">
               {dashboard.timetableToday.map((entry) => (
                 <div key={entry.id} className="flex items-center justify-between py-3">
                   <div>
                     <p className="font-medium">{entry.subjectName ?? `Subject ${entry.subjectId}`}</p>
-                    <p className="text-sm text-muted-foreground">{entry.room}</p>
+                    <p className="text-sm text-muted-foreground">{entry.room ?? ""}</p>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {entry.startTime} – {entry.endTime}
-                  </div>
+                  <div className="text-sm text-muted-foreground">{entry.startTime} – {entry.endTime}</div>
                 </div>
               ))}
             </div>
@@ -127,8 +121,7 @@ export default function LearnerDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" />
-              Notifications
+              <Bell className="h-5 w-5 text-primary" /> Notifications
             </CardTitle>
           </CardHeader>
           <CardContent>

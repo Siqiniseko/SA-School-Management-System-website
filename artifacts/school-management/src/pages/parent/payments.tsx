@@ -6,22 +6,26 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, CreditCard } from "lucide-react";
 
 function fmt(n: number) { return `R ${(n / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` }
+function fmtDate(d: string | null | undefined) {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-ZA", { dateStyle: "medium" });
+}
 
 const METHOD_LABELS: Record<string, string> = {
   cash: "Cash",
   eft: "EFT",
-  card: "Card",
+  credit_card: "Credit Card",
   debit_order: "Debit Order",
 };
 
 export default function ParentPayments() {
   const { user } = useAuth();
   const { data: allLearners } = useListLearners();
-  const myLearners = allLearners?.filter(l => l.parentId === user?.id) ?? [];
+  const myLearners = (allLearners ?? []).filter(l => l.parentId === user?.id);
   const myLearnerIds = myLearners.map(l => l.id);
 
   const { data: payments, isLoading } = useListPayments();
-  const myPayments = payments?.filter(p => myLearnerIds.includes(p.learnerId)) ?? [];
+  const myPayments = (payments ?? []).filter(p => myLearnerIds.includes(p.learnerId));
 
   const totalPaid = myPayments.reduce((s, p) => s + p.amount, 0);
 
@@ -50,7 +54,7 @@ export default function ParentPayments() {
           <CardHeader><CardTitle>All Payments</CardTitle></CardHeader>
           <CardContent>
             <div className="divide-y">
-              {[...myPayments].sort((a,b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()).map(p => (
+              {[...myPayments].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(p => (
                 <div key={p.id} className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -59,7 +63,7 @@ export default function ParentPayments() {
                     <div>
                       <p className="font-medium">{p.referenceNumber}</p>
                       <p className="text-sm text-muted-foreground">{p.learnerName} · {METHOD_LABELS[p.paymentMethod] ?? p.paymentMethod}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(p.paymentDate).toLocaleDateString("en-ZA", { dateStyle: "medium" })}</p>
+                      <p className="text-xs text-muted-foreground">{fmtDate(p.processedAt ?? p.createdAt)}</p>
                     </div>
                   </div>
                   <div className="text-right">

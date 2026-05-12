@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetParentDashboard } from "@workspace/api-client-react";
+import { useGetParentDashboard, getGetParentDashboardQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,8 +8,9 @@ import { Users, Banknote, Bell, GraduationCap } from "lucide-react";
 
 export default function ParentDashboard() {
   const { user } = useAuth();
-  const { data: dashboard, isLoading } = useGetParentDashboard(user?.id ?? 0, {
-    query: { enabled: !!user?.id },
+  const uid = user?.id ?? 0;
+  const { data: dashboard, isLoading } = useGetParentDashboard(uid, {
+    query: { queryKey: getGetParentDashboardQueryKey(uid), enabled: !!user?.id },
   });
 
   if (isLoading) {
@@ -17,9 +18,7 @@ export default function ParentDashboard() {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">Parent Overview</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
-          ))}
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}
         </div>
       </div>
     );
@@ -59,8 +58,7 @@ export default function ParentDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-primary" />
-              Children's Progress
+              <GraduationCap className="h-5 w-5 text-primary" /> Children's Progress
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -84,9 +82,7 @@ export default function ParentDashboard() {
 
       {dashboard.recentPayments.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Payments</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>Recent Payments</CardTitle></CardHeader>
           <CardContent>
             <div className="divide-y">
               {dashboard.recentPayments.map((payment) => (
@@ -109,8 +105,7 @@ export default function ParentDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" />
-              Notifications
+              <Bell className="h-5 w-5 text-primary" /> Notifications
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,11 +24,11 @@ function fmt(n: number) { return `R ${n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))
 export default function ParentFees() {
   const { user } = useAuth();
   const { data: allLearners } = useListLearners();
-  const myLearners = allLearners?.filter(l => l.parentId === user?.id) ?? [];
+  const myLearners = (allLearners ?? []).filter(l => l.parentId === user?.id);
   const myLearnerIds = myLearners.map(l => l.id);
 
   const { data: fees, isLoading } = useListFees();
-  const myFees = fees?.filter(f => myLearnerIds.includes(f.learnerId)) ?? [];
+  const myFees = (fees ?? []).filter(f => myLearnerIds.includes(f.learnerId));
 
   const processPayment = useProcessPayment();
   const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export default function ParentFees() {
 
   const openPay = (fee: (typeof myFees)[0]) => {
     setSelectedFee(fee);
-    setForm({ amount: ((fee.totalAmount - fee.paidAmount) / 100).toFixed(2), paymentMethod: "cash", cardNumber: "", cardName: "" });
+    setForm({ amount: (fee.outstandingBalance / 100).toFixed(2), paymentMethod: "cash", cardNumber: "", cardName: "" });
     setOpen(true);
   };
 
@@ -70,7 +70,7 @@ export default function ParentFees() {
     } finally { setSaving(false); }
   };
 
-  const unpaidTotal = myFees.reduce((s, f) => s + (f.totalAmount - f.paidAmount), 0);
+  const unpaidTotal = myFees.reduce((s, f) => s + f.outstandingBalance, 0);
 
   if (isLoading) return <Skeleton className="h-64 w-full rounded-xl" />;
 
@@ -99,7 +99,7 @@ export default function ParentFees() {
       ) : (
         <div className="space-y-4">
           {myFees.map(fee => {
-            const remaining = fee.totalAmount - fee.paidAmount;
+            const remaining = fee.outstandingBalance;
             return (
               <Card key={fee.id}>
                 <CardContent className="pt-6">
@@ -112,13 +112,13 @@ export default function ParentFees() {
                     <div className="text-right">
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[fee.status] ?? "bg-gray-100"}`}>{fee.status}</span>
                       <p className="text-lg font-bold mt-1">{fmt(fee.totalAmount / 100)}</p>
-                      <p className="text-sm text-muted-foreground">Paid: {fmt(fee.paidAmount / 100)}</p>
+                      <p className="text-sm text-muted-foreground">Paid: {fmt(fee.amountPaid / 100)}</p>
                     </div>
                   </div>
                   {remaining > 0 && (
                     <div className="mt-4">
                       <div className="h-2 w-full bg-muted rounded-full overflow-hidden mb-3">
-                        <div className="h-full bg-primary" style={{ width: `${Math.min((fee.paidAmount / fee.totalAmount) * 100, 100)}%` }} />
+                        <div className="h-full bg-primary" style={{ width: `${Math.min((fee.amountPaid / fee.totalAmount) * 100, 100)}%` }} />
                       </div>
                       <Button className="w-full" onClick={() => openPay(fee)}>
                         <CreditCard className="mr-2 h-4 w-4" /> Pay {fmt(remaining / 100)}
@@ -144,7 +144,7 @@ export default function ParentFees() {
             <div className="space-y-4 py-2">
               <div className="bg-muted rounded-lg p-3 text-sm">
                 <p className="font-medium">{selectedFee.description}</p>
-                <p className="text-muted-foreground">{selectedFee.learnerName} · Outstanding: {fmt((selectedFee.totalAmount - selectedFee.paidAmount) / 100)}</p>
+                <p className="text-muted-foreground">{selectedFee.learnerName} · Outstanding: {fmt(selectedFee.outstandingBalance / 100)}</p>
               </div>
               <div className="space-y-1">
                 <Label>Amount (R) *</Label>
@@ -157,12 +157,12 @@ export default function ParentFees() {
                   <SelectContent>
                     <SelectItem value="cash">Cash</SelectItem>
                     <SelectItem value="eft">EFT / Bank Transfer</SelectItem>
-                    <SelectItem value="card">Card</SelectItem>
+                    <SelectItem value="credit_card">Credit Card</SelectItem>
                     <SelectItem value="debit_order">Debit Order</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              {form.paymentMethod === "card" && (
+              {form.paymentMethod === "credit_card" && (
                 <div className="space-y-3">
                   <div className="space-y-1">
                     <Label>Card Number</Label>

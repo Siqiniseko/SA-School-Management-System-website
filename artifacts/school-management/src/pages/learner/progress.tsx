@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetLearnerProgress, useListSubjects } from "@workspace/api-client-react";
+import { useGetLearnerProgress, getGetLearnerProgressQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,7 +26,10 @@ function pctBg(pct: number) {
 
 export default function LearnerProgress() {
   const { user } = useAuth();
-  const { data: progress, isLoading } = useGetLearnerProgress(user?.id ?? 0, { query: { enabled: !!user?.id } });
+  const uid = user?.id ?? 0;
+  const { data: progress, isLoading } = useGetLearnerProgress(uid, {
+    query: { queryKey: getGetLearnerProgressQueryKey(uid), enabled: !!user?.id },
+  });
 
   if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}</div>;
   if (!progress) return null;

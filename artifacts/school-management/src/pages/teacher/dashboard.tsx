@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetTeacherDashboard } from "@workspace/api-client-react";
+import { useGetTeacherDashboard, getGetTeacherDashboardQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,8 +7,9 @@ import { BookOpen, Users, CheckCircle, Bell } from "lucide-react";
 
 export default function TeacherDashboard() {
   const { user } = useAuth();
-  const { data: dashboard, isLoading } = useGetTeacherDashboard(user?.id ?? 0, {
-    query: { enabled: !!user?.id },
+  const uid = user?.id ?? 0;
+  const { data: dashboard, isLoading } = useGetTeacherDashboard(uid, {
+    query: { queryKey: getGetTeacherDashboardQueryKey(uid), enabled: !!user?.id },
   });
 
   if (isLoading) {
@@ -16,9 +17,7 @@ export default function TeacherDashboard() {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold tracking-tight">Teacher Overview</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-xl" />
-          ))}
+          {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}
         </div>
       </div>
     );
@@ -75,9 +74,7 @@ export default function TeacherDashboard() {
 
       {dashboard.myClasses.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>My Classes</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>My Classes</CardTitle></CardHeader>
           <CardContent>
             <div className="divide-y">
               {dashboard.myClasses.map((cls) => (
@@ -86,9 +83,7 @@ export default function TeacherDashboard() {
                     <p className="font-medium">{cls.name}</p>
                     <p className="text-sm text-muted-foreground">{cls.grade}</p>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {cls.learnerCount} learners
-                  </div>
+                  <div className="text-sm text-muted-foreground">{cls.learnerCount} learners</div>
                 </div>
               ))}
             </div>
@@ -98,9 +93,7 @@ export default function TeacherDashboard() {
 
       {dashboard.recentNotifications.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Notifications</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>Recent Notifications</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-4">
               {dashboard.recentNotifications.map((n) => (

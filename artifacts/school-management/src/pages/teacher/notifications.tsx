@@ -14,7 +14,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 export default function TeacherNotifications() {
   const { user } = useAuth();
-  const { data: notifications, isLoading } = useListNotifications({ targetRole: "teacher", userId: user?.id });
+  const { data: notifications, isLoading } = useListNotifications({ userId: user?.id });
 
   return (
     <div className="space-y-6">

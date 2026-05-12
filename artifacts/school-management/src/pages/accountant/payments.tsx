@@ -16,8 +16,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus, CreditCard } from "lucide-react";
 
 function fmt(n: number) { return `R ${(n / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` }
+function fmtDate(d: string | null | undefined) {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-ZA", { dateStyle: "medium" });
+}
 
-const METHOD_LABELS: Record<string, string> = { cash: "Cash", eft: "EFT", card: "Card", debit_order: "Debit Order" };
+const METHOD_LABELS: Record<string, string> = { cash: "Cash", eft: "EFT", credit_card: "Credit Card", debit_order: "Debit Order" };
 
 export default function AccountantPayments() {
   const { data: payments, isLoading } = useListPayments();
@@ -27,7 +31,7 @@ export default function AccountantPayments() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const unpaidFees = fees?.filter(f => f.status !== "paid") ?? [];
+  const unpaidFees = (fees ?? []).filter(f => f.status !== "paid");
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ feeId: "", learnerId: "", amount: "", paymentMethod: "cash", cardNumber: "", cardName: "" });
@@ -42,7 +46,7 @@ export default function AccountantPayments() {
 
   const handleFeeSelect = (feeId: string) => {
     const fee = unpaidFees.find(f => f.id.toString() === feeId);
-    setForm(f => ({ ...f, feeId, learnerId: fee?.learnerId.toString() ?? "", amount: fee ? ((fee.totalAmount - fee.paidAmount) / 100).toFixed(2) : "" }));
+    setForm(f => ({ ...f, feeId, learnerId: fee?.learnerId.toString() ?? "", amount: fee ? (fee.outstandingBalance / 100).toFixed(2) : "" }));
   };
 
   const handleSave = async () => {
@@ -63,7 +67,7 @@ export default function AccountantPayments() {
     } finally { setSaving(false); }
   };
 
-  const total = payments?.reduce((s, p) => s + p.amount, 0) ?? 0;
+  const total = (payments ?? []).reduce((s, p) => s + p.amount, 0);
 
   return (
     <div className="space-y-6">
@@ -98,13 +102,13 @@ export default function AccountantPayments() {
             <TableBody>
               {isLoading ? [1,2,3].map(i => (
                 <TableRow key={i}><TableCell colSpan={6}><Skeleton className="h-8 w-full" /></TableCell></TableRow>
-              )) : [...(payments ?? [])].sort((a,b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()).map(p => (
+              )) : [...(payments ?? [])].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(p => (
                 <TableRow key={p.id}>
                   <TableCell className="font-mono text-sm">{p.referenceNumber}</TableCell>
                   <TableCell className="font-medium">{p.learnerName}</TableCell>
                   <TableCell className="font-bold text-green-600">{fmt(p.amount)}</TableCell>
                   <TableCell>{METHOD_LABELS[p.paymentMethod] ?? p.paymentMethod}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{new Date(p.paymentDate).toLocaleDateString("en-ZA", { dateStyle: "medium" })}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{fmtDate(p.processedAt ?? p.createdAt)}</TableCell>
                   <TableCell><span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700 capitalize">{p.status}</span></TableCell>
                 </TableRow>
               ))}
@@ -128,7 +132,7 @@ export default function AccountantPayments() {
                   <SelectItem value="none">Select...</SelectItem>
                   {unpaidFees.map(f => (
                     <SelectItem key={f.id} value={f.id.toString()}>
-                      {f.learnerName} – {f.description} ({fmt(f.totalAmount - f.paidAmount)} due)
+                      {f.learnerName} – {f.description} ({fmt(f.outstandingBalance)} due)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -137,7 +141,7 @@ export default function AccountantPayments() {
             {selectedFee && (
               <div className="bg-muted rounded-lg p-3 text-sm">
                 <p className="font-medium">{selectedFee.learnerName}</p>
-                <p className="text-muted-foreground">Outstanding: {fmt(selectedFee.totalAmount - selectedFee.paidAmount)}</p>
+                <p className="text-muted-foreground">Outstanding: {fmt(selectedFee.outstandingBalance)}</p>
               </div>
             )}
             <div className="grid grid-cols-2 gap-3">
@@ -152,13 +156,13 @@ export default function AccountantPayments() {
                   <SelectContent>
                     <SelectItem value="cash">Cash</SelectItem>
                     <SelectItem value="eft">EFT</SelectItem>
-                    <SelectItem value="card">Card</SelectItem>
+                    <SelectItem value="credit_card">Credit Card</SelectItem>
                     <SelectItem value="debit_order">Debit Order</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            {form.paymentMethod === "card" && (
+            {form.paymentMethod === "credit_card" && (
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label>Card Number</Label>

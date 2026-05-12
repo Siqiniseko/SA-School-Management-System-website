@@ -23,7 +23,6 @@ const STATUS_COLORS: Record<string, string> = {
 };
 function fmt(n: number) { return `R ${(n / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` }
 
-const today = new Date().toISOString().split("T")[0];
 const blank = { learnerId: "", description: "", totalAmount: "", dueDate: "", term: "1", year: new Date().getFullYear().toString() };
 
 export default function AccountantFees() {
@@ -57,7 +56,7 @@ export default function AccountantFees() {
     setSaving(true);
     try {
       if (editId) {
-        await updateFee.mutateAsync({ id: editId, data: { description: form.description, totalAmount: total, dueDate: form.dueDate, term: parseInt(form.term) } });
+        await updateFee.mutateAsync({ id: editId, data: { description: form.description, totalAmount: total, dueDate: form.dueDate } });
         toast({ title: "Fee record updated" });
       } else {
         await createFee.mutateAsync({ data: { learnerId: parseInt(form.learnerId), description: form.description, totalAmount: total, dueDate: form.dueDate, term: parseInt(form.term), year: parseInt(form.year) } });
@@ -77,8 +76,8 @@ export default function AccountantFees() {
     } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
   };
 
-  const totalOutstanding = fees?.reduce((s, f) => s + (f.totalAmount - f.paidAmount), 0) ?? 0;
-  const totalCollected = fees?.reduce((s, f) => s + f.paidAmount, 0) ?? 0;
+  const totalOutstanding = fees?.reduce((s, f) => s + f.outstandingBalance, 0) ?? 0;
+  const totalCollected = fees?.reduce((s, f) => s + f.amountPaid, 0) ?? 0;
 
   return (
     <div className="space-y-6">
@@ -126,7 +125,7 @@ export default function AccountantFees() {
                   <TableCell>{f.description}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">T{f.term} {f.year}</TableCell>
                   <TableCell>{fmt(f.totalAmount)}</TableCell>
-                  <TableCell>{fmt(f.paidAmount)}</TableCell>
+                  <TableCell>{fmt(f.amountPaid)}</TableCell>
                   <TableCell><span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[f.status] ?? "bg-gray-100"}`}>{f.status}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(f.dueDate).toLocaleDateString("en-ZA")}</TableCell>
                   <TableCell className="text-right">
