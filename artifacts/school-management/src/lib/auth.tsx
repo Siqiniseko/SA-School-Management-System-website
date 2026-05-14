@@ -22,6 +22,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 
+  const handleLogin: typeof loginMutation.mutateAsync = async (...args) => {
+    const result = await loginMutation.mutateAsync(...args);
+    await refetch();
+    return result;
+  };
+
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
     await refetch();
@@ -32,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user: user || null,
         isLoading,
-        login: loginMutation.mutateAsync,
+        login: handleLogin,
         logout: handleLogout,
       }}
     >
