@@ -2,17 +2,15 @@ import React from "react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
-import { useLocation } from "wouter";
 
 export function Topbar() {
   const { user, logout } = useAuth();
-  const [, setLocation] = useLocation();
 
   if (!user) return null;
 
   const handleLogout = async () => {
     await logout();
-    setLocation("/login");
+    window.location.href = "/login";
   };
 
   return (

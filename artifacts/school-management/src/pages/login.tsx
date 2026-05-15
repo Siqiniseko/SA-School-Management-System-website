@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap, ShieldAlert, BookOpen, Users, Banknote, Loader2 } from "lucide-react";
@@ -21,7 +20,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const handleLogin = async (u: string, p: string) => {
@@ -29,17 +27,16 @@ export default function Login() {
     try {
       const res = await login({ data: { username: u, password: p } });
       toast({
-        title: "Login successful",
-        description: `Welcome back, \${res.user.fullName}`,
+        title: `Welcome back, ${res.user.fullName}`,
+        description: `Signed in as ${res.user.role}`,
       });
-      setLocation(`/dashboard/\${res.user.role}`);
+      window.location.href = `/dashboard/${res.user.role}`;
     } catch (error: any) {
       toast({
         title: "Login failed",
-        description: error?.message || "Invalid credentials",
+        description: error?.message || "Invalid credentials. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
