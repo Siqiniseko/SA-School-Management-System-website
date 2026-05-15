@@ -14,5 +14,7 @@ export interface UpdateUserBody {
   /** @nullable */
   phone?: string | null;
   /** @nullable */
+  profileImageUrl?: string | null;
+  /** @nullable */
   password?: string | null;
 }

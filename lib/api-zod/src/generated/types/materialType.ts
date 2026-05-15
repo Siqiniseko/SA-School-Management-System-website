@@ -14,5 +14,6 @@ export const MaterialType = {
   worksheet: "worksheet",
   textbook: "textbook",
   video: "video",
+  record: "record",
   other: "other",
 } as const;

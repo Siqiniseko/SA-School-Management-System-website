@@ -35,7 +35,11 @@ node_modules
 npm-debug.log
 yarn-error.log
 testem.log
+*.log
 /typings
+
+# local runtime uploads
+/uploads/
 
 # System Files
 .DS_Store

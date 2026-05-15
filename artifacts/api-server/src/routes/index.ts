@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import healthRouter from "./health";
+import docsRouter from "./docs";
 import authRouter from "./auth";
 import usersRouter from "./users";
 import learnersRouter from "./learners";
@@ -12,11 +13,14 @@ import feesRouter from "./fees";
 import paymentsRouter from "./payments";
 import timetableRouter from "./timetable";
 import materialsRouter from "./materials";
+import uploadsRouter from "./uploads";
+import virtualClassesRouter from "./virtual-classes";
 import dashboardRouter from "./dashboard";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
+router.use(docsRouter);
 router.use(authRouter);
 router.use(usersRouter);
 router.use(learnersRouter);
@@ -29,6 +33,8 @@ router.use(feesRouter);
 router.use(paymentsRouter);
 router.use(timetableRouter);
 router.use(materialsRouter);
+router.use(uploadsRouter);
+router.use(virtualClassesRouter);
 router.use(dashboardRouter);
 
 export default router;

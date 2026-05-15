@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import { 
   Users, BookOpen, Calendar, Bell, Banknote, FileText,
-  BarChart, LayoutDashboard, GraduationCap, ClipboardCheck
+  BarChart, LayoutDashboard, GraduationCap, ClipboardCheck, UserRound, Video
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,8 @@ export function Sidebar() {
         { label: "Attendance", href: "/teacher/attendance", icon: ClipboardCheck },
         { label: "Marks", href: "/teacher/marks", icon: BarChart },
         { label: "Materials", href: "/teacher/materials", icon: FileText },
+        { label: "Records", href: "/teacher/records", icon: ClipboardCheck },
+        { label: "Virtual Classes", href: "/teacher/virtual-classes", icon: Video },
         { label: "Notifications", href: "/teacher/notifications", icon: Bell },
       ];
       break;
@@ -63,6 +65,8 @@ export function Sidebar() {
       ];
       break;
   }
+
+  links = [...links, { label: "Profile", href: "/profile", icon: UserRound }];
 
   return (
     <aside className="w-64 bg-sidebar border-r border-sidebar-border min-h-[100dvh] flex flex-col text-sidebar-foreground">

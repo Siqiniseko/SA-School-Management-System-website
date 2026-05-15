@@ -16,4 +16,6 @@ export interface CreateUserBody {
   email?: string | null;
   /** @nullable */
   phone?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
 }

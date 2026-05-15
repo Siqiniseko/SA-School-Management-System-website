@@ -25,6 +25,7 @@ function formatUser(user: typeof usersTable.$inferSelect) {
     fullName: user.fullName,
     email: user.email,
     phone: user.phone,
+    profileImageUrl: user.profileImageUrl,
     createdAt: user.createdAt.toISOString(),
   };
 }
@@ -94,6 +95,7 @@ router.patch("/users/:id", async (req, res): Promise<void> => {
   if (parsed.data.fullName != null) updates.fullName = parsed.data.fullName;
   if (parsed.data.email != null) updates.email = parsed.data.email;
   if (parsed.data.phone != null) updates.phone = parsed.data.phone;
+  if (parsed.data.profileImageUrl != null) updates.profileImageUrl = parsed.data.profileImageUrl;
   if (parsed.data.password != null) updates.passwordHash = hashPassword(parsed.data.password);
 
   if (Object.keys(updates).length === 0) {

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { GraduationCap, ShieldAlert, BookOpen, Users, Banknote, Loader2 } from "lucide-react";
+import { ArrowLeft, GraduationCap, ShieldAlert, BookOpen, Users, Banknote, Loader2 } from "lucide-react";
 
 const DEMO_ACCOUNTS = [
   { role: "Admin", username: "admin", password: "admin123", icon: ShieldAlert },
@@ -49,6 +50,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <Link href="/" className="fixed left-5 top-5 inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" />
+        Home
+      </Link>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-8">
         <div className="mx-auto h-16 w-16 bg-primary rounded-xl flex items-center justify-center text-primary-foreground mb-4 shadow-lg">
           <span className="text-2xl font-bold">SA</span>

@@ -39,7 +39,7 @@ export default function TeacherMaterials() {
   const { toast } = useToast();
 
   const mySubjects = subjects?.filter(s => s.teacherId === user?.id) ?? [];
-  const myMaterials = materials?.filter(m => m.uploadedBy === user?.id) ?? [];
+  const myMaterials = materials?.filter(m => m.uploadedBy === user?.id && m.type !== "record") ?? [];
 
   const blank = { title: "", description: "", type: "notes", subjectId: "", classId: "", grade: "", fileUrl: "" };
   const [open, setOpen] = useState(false);

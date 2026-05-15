@@ -9,3 +9,4 @@ export * from "./fees";
 export * from "./payments";
 export * from "./timetable";
 export * from "./materials";
+export * from "./virtualClasses";

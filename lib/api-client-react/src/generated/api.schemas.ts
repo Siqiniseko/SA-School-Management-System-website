@@ -41,6 +41,8 @@ export interface User {
   email?: string | null;
   /** @nullable */
   phone?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
   createdAt: string;
 }
 
@@ -69,6 +71,8 @@ export interface CreateUserBody {
   email?: string | null;
   /** @nullable */
   phone?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
 }
 
 export interface UpdateUserBody {
@@ -78,6 +82,8 @@ export interface UpdateUserBody {
   email?: string | null;
   /** @nullable */
   phone?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
   /** @nullable */
   password?: string | null;
 }
@@ -586,6 +592,7 @@ export const MaterialType = {
   worksheet: "worksheet",
   textbook: "textbook",
   video: "video",
+  record: "record",
   other: "other",
 } as const;
 
@@ -621,6 +628,7 @@ export const CreateMaterialBodyType = {
   worksheet: "worksheet",
   textbook: "textbook",
   video: "video",
+  record: "record",
   other: "other",
 } as const;
 

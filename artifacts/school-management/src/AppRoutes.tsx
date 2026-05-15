@@ -3,6 +3,8 @@ import { Switch, Route, Redirect } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import Login from "@/pages/login";
+import LandingPage from "@/pages/landing";
+import ProfilePage from "@/pages/profile";
 
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminUsers from "@/pages/admin/users";
@@ -17,6 +19,8 @@ import TeacherAttendance from "@/pages/teacher/attendance";
 import TeacherMarks from "@/pages/teacher/marks";
 import TeacherMaterials from "@/pages/teacher/materials";
 import TeacherNotifications from "@/pages/teacher/notifications";
+import TeacherRecords from "@/pages/teacher/records";
+import TeacherVirtualClasses from "@/pages/teacher/virtual-classes";
 
 import LearnerDashboard from "@/pages/learner/dashboard";
 import LearnerProgress from "@/pages/learner/progress";
@@ -71,7 +75,11 @@ export default function AppRoutes() {
       </Route>
 
       <Route path="/">
-        {user ? <Redirect to={"/dashboard/" + user.role} /> : <Redirect to="/login" />}
+        <LandingPage />
+      </Route>
+
+      <Route path="/profile">
+        <ProtectedRoute component={ProfilePage} />
       </Route>
 
       {/* Admin routes */}
@@ -109,6 +117,12 @@ export default function AppRoutes() {
       </Route>
       <Route path="/teacher/materials">
         <ProtectedRoute component={TeacherMaterials} allowedRoles={["teacher"]} />
+      </Route>
+      <Route path="/teacher/records">
+        <ProtectedRoute component={TeacherRecords} allowedRoles={["teacher"]} />
+      </Route>
+      <Route path="/teacher/virtual-classes">
+        <ProtectedRoute component={TeacherVirtualClasses} allowedRoles={["teacher"]} />
       </Route>
       <Route path="/teacher/notifications">
         <ProtectedRoute component={TeacherNotifications} allowedRoles={["teacher"]} />
@@ -163,7 +177,7 @@ export default function AppRoutes() {
       </Route>
 
       <Route path="/:rest*">
-        {user ? <Redirect to={"/dashboard/" + user.role} /> : <Redirect to="/login" />}
+        {user ? <Redirect to={"/dashboard/" + user.role} /> : <LandingPage />}
       </Route>
     </Switch>
   );

@@ -38,6 +38,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
       fullName: user.fullName,
       email: user.email,
       phone: user.phone,
+      profileImageUrl: user.profileImageUrl,
       createdAt: user.createdAt.toISOString(),
     },
     message: "Login successful",
@@ -71,6 +72,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     fullName: user.fullName,
     email: user.email,
     phone: user.phone,
+    profileImageUrl: user.profileImageUrl,
     createdAt: user.createdAt.toISOString(),
   });
 });

@@ -16,5 +16,7 @@ export interface User {
   email?: string | null;
   /** @nullable */
   phone?: string | null;
+  /** @nullable */
+  profileImageUrl?: string | null;
   createdAt: string;
 }

@@ -33,6 +33,10 @@ tags:
     description: Timetable management
   - name: materials
     description: Learning materials
+  - name: uploads
+    description: Profile and record file uploads
+  - name: virtual-classes
+    description: Online class scheduling
   - name: dashboard
     description: Dashboard summaries
 
@@ -967,6 +971,141 @@ paths:
         "204":
           description: Deleted
 
+  /uploads:
+    post:
+      operationId: uploadFile
+      tags: [uploads]
+      summary: Upload a profile photo or record file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadFileBody"
+      responses:
+        "201":
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadFileResponse"
+        "400":
+          description: Invalid upload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /uploads/{folder}/{fileName}:
+    get:
+      operationId: getUploadedFile
+      tags: [uploads]
+      summary: Get an uploaded file
+      parameters:
+        - name: folder
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [profiles, records]
+        - name: fileName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Uploaded file
+
+  /virtual-classes:
+    get:
+      operationId: listVirtualClasses
+      tags: [virtual-classes]
+      summary: List virtual classes
+      parameters:
+        - name: teacherId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Virtual classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VirtualClass"
+    post:
+      operationId: createVirtualClass
+      tags: [virtual-classes]
+      summary: Schedule a virtual class
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVirtualClassBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VirtualClass"
+        "400":
+          description: Invalid virtual class
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /virtual-classes/{id}/status:
+    patch:
+      operationId: updateVirtualClassStatus
+      tags: [virtual-classes]
+      summary: Update virtual class status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVirtualClassStatusBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VirtualClass"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /virtual-classes/{id}:
+    delete:
+      operationId: deleteVirtualClass
+      tags: [virtual-classes]
+      summary: Delete virtual class
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
   /dashboard/admin:
     get:
       operationId: getAdminDashboard
@@ -1114,6 +1253,8 @@ components:
           type: ["string", "null"]
         phone:
           type: ["string", "null"]
+        profileImageUrl:
+          type: ["string", "null"]
         createdAt:
           type: string
       required:
@@ -1139,6 +1280,8 @@ components:
           type: ["string", "null"]
         phone:
           type: ["string", "null"]
+        profileImageUrl:
+          type: ["string", "null"]
       required:
         - username
         - password
@@ -1153,6 +1296,8 @@ components:
         email:
           type: ["string", "null"]
         phone:
+          type: ["string", "null"]
+        profileImageUrl:
           type: ["string", "null"]
         password:
           type: ["string", "null"]
@@ -1864,7 +2009,7 @@ components:
           type: ["string", "null"]
         type:
           type: string
-          enum: [notes, assignment, worksheet, textbook, video, other]
+          enum: [notes, assignment, worksheet, textbook, video, record, other]
         subjectId:
           type: ["integer", "null"]
         subjectName:
@@ -1896,7 +2041,7 @@ components:
           type: ["string", "null"]
         type:
           type: string
-          enum: [notes, assignment, worksheet, textbook, video, other]
+          enum: [notes, assignment, worksheet, textbook, video, record, other]
         subjectId:
           type: ["integer", "null"]
         classId:
@@ -1910,6 +2055,117 @@ components:
       required:
         - title
         - type
+
+    UploadFileBody:
+      type: object
+      properties:
+        folder:
+          type: string
+          enum: [profiles, records]
+        fileName:
+          type: string
+        contentType:
+          type: string
+        data:
+          type: string
+          description: Base64 data URL or base64 file content
+      required:
+        - folder
+        - fileName
+        - data
+
+    UploadFileResponse:
+      type: object
+      properties:
+        url:
+          type: string
+        fileName:
+          type: string
+        contentType:
+          type: string
+        size:
+          type: integer
+      required:
+        - url
+        - fileName
+        - contentType
+        - size
+
+    VirtualClass:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        teacherId:
+          type: integer
+        teacherName:
+          type: ["string", "null"]
+        classId:
+          type: ["integer", "null"]
+        className:
+          type: ["string", "null"]
+        subjectId:
+          type: ["integer", "null"]
+        subjectName:
+          type: ["string", "null"]
+        meetingUrl:
+          type: string
+        scheduledAt:
+          type: string
+        durationMinutes:
+          type: integer
+        status:
+          type: string
+          enum: [scheduled, live, completed, cancelled]
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - teacherId
+        - meetingUrl
+        - scheduledAt
+        - durationMinutes
+        - status
+        - createdAt
+
+    CreateVirtualClassBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        teacherId:
+          type: integer
+        classId:
+          type: ["integer", "null"]
+        subjectId:
+          type: ["integer", "null"]
+        meetingUrl:
+          type: string
+        scheduledAt:
+          type: string
+        durationMinutes:
+          type: integer
+      required:
+        - title
+        - teacherId
+        - meetingUrl
+        - scheduledAt
+
+    UpdateVirtualClassStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [scheduled, live, completed, cancelled]
+      required:
+        - status
 
     AdminDashboard:
       type: object

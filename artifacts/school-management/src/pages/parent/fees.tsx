@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { useListFees, useProcessPayment, useListLearners, getListFeesQueryKey, getListPaymentsQueryKey } from "@workspace/api-client-react";
+import {
+  getListFeesQueryKey,
+  getListPaymentsQueryKey,
+  getPaymentReceipt,
+  useListFees,
+  useListLearners,
+  useProcessPayment,
+  type ProcessPaymentBodyPaymentMethod,
+} from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +18,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { CreditCard, CheckCircle, AlertCircle } from "lucide-react";
+import { openPaymentSlipWindow, printPaymentSlip } from "@/lib/payment-slip";
+import { CreditCard, CheckCircle, AlertCircle, Printer } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
   paid: "bg-green-100 text-green-700",
@@ -49,23 +58,36 @@ export default function ParentFees() {
     if (!selectedFee) return;
     const amount = parseFloat(form.amount);
     if (isNaN(amount) || amount <= 0) { toast({ title: "Invalid amount", variant: "destructive" }); return; }
+    if (Math.round(amount * 100) > selectedFee.outstandingBalance) {
+      toast({ title: "Amount is too high", description: "Payment cannot exceed the outstanding balance.", variant: "destructive" });
+      return;
+    }
+
+    const printWindow = openPaymentSlipWindow();
     setSaving(true);
     try {
-      await processPayment.mutateAsync({
+      const payment = await processPayment.mutateAsync({
         data: {
           feeId: selectedFee.id,
           learnerId: selectedFee.learnerId,
           amount: Math.round(amount * 100),
-          paymentMethod: form.paymentMethod as any,
+          paymentMethod: form.paymentMethod as ProcessPaymentBodyPaymentMethod,
           cardNumber: form.cardNumber || null,
           cardName: form.cardName || null,
         },
       });
-      toast({ title: "Payment processed successfully" });
+      const receipt = await getPaymentReceipt(payment.id);
+      const didPrint = printPaymentSlip(receipt, printWindow);
+
+      toast({
+        title: "Payment processed successfully",
+        description: didPrint ? "Payment slip opened for printing." : "Payment recorded, but the slip window was blocked.",
+      });
       queryClient.invalidateQueries({ queryKey: getListFeesQueryKey() });
       queryClient.invalidateQueries({ queryKey: getListPaymentsQueryKey() });
       setOpen(false);
     } catch (e: any) {
+      printWindow?.close();
       toast({ title: "Payment failed", description: e.message, variant: "destructive" });
     } finally { setSaving(false); }
   };
@@ -158,7 +180,8 @@ export default function ParentFees() {
                     <SelectItem value="cash">Cash</SelectItem>
                     <SelectItem value="eft">EFT / Bank Transfer</SelectItem>
                     <SelectItem value="credit_card">Credit Card</SelectItem>
-                    <SelectItem value="debit_order">Debit Order</SelectItem>
+                    <SelectItem value="debit_card">Debit Card</SelectItem>
+                    <SelectItem value="direct_deposit">Direct Deposit</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -178,7 +201,9 @@ export default function ParentFees() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handlePay} disabled={saving}>{saving ? "Processing..." : "Pay Now"}</Button>
+            <Button onClick={handlePay} disabled={saving}>
+              {saving ? "Processing..." : <><Printer className="mr-2 h-4 w-4" /> Pay and Print Slip</>}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -54,7 +54,7 @@ router.get("/payments/:id/receipt", async (req, res): Promise<void> => {
     amount: parseFloat(payment.amount as string),
     paymentMethod: payment.paymentMethod,
     processedAt: payment.processedAt?.toISOString() ?? payment.createdAt.toISOString(),
-    schoolName: "Replit Academy",
+    schoolName: "SA School Management System",
   });
 });
 
@@ -78,6 +78,31 @@ router.post("/payments", async (req, res): Promise<void> => {
     return;
   }
 
+  if (parsed.data.amount <= 0) {
+    res.status(400).json({ error: "Payment amount must be greater than zero" });
+    return;
+  }
+
+  const [fee] = await db.select().from(feesTable).where(eq(feesTable.id, parsed.data.feeId));
+  if (!fee) {
+    res.status(404).json({ error: "Fee record not found" });
+    return;
+  }
+
+  if (fee.learnerId !== parsed.data.learnerId) {
+    res.status(400).json({ error: "Payment learner does not match fee record" });
+    return;
+  }
+
+  const amountPaid = parseFloat(fee.amountPaid as string);
+  const totalAmount = parseFloat(fee.totalAmount as string);
+  const outstandingBalance = Math.max(0, totalAmount - amountPaid);
+
+  if (parsed.data.amount > outstandingBalance) {
+    res.status(400).json({ error: "Payment amount cannot exceed outstanding balance" });
+    return;
+  }
+
   const referenceNumber = `PAY-${Date.now()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 
   const [payment] = await db.insert(paymentsTable).values({
@@ -90,17 +115,13 @@ router.post("/payments", async (req, res): Promise<void> => {
     processedAt: new Date(),
   }).returning();
 
-  const [fee] = await db.select().from(feesTable).where(eq(feesTable.id, parsed.data.feeId));
-  if (fee) {
-    const newAmountPaid = parseFloat(fee.amountPaid as string) + parsed.data.amount;
-    const totalAmount = parseFloat(fee.totalAmount as string);
-    const newStatus = newAmountPaid >= totalAmount ? "paid" : newAmountPaid > 0 ? "partial" : "outstanding";
+  const newAmountPaid = amountPaid + parsed.data.amount;
+  const newStatus = newAmountPaid >= totalAmount ? "paid" : "partial";
 
-    await db.update(feesTable).set({
-      amountPaid: newAmountPaid.toString(),
-      status: newStatus,
-    }).where(eq(feesTable.id, parsed.data.feeId));
-  }
+  await db.update(feesTable).set({
+    amountPaid: newAmountPaid.toString(),
+    status: newStatus,
+  }).where(eq(feesTable.id, parsed.data.feeId));
 
   res.status(201).json(await formatPayment(payment));
 });

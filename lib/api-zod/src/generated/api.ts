@@ -52,6 +52,7 @@ export const GetMeResponse = zod.object({
   fullName: zod.string(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
   createdAt: zod.string(),
 });
 
@@ -69,6 +70,7 @@ export const ListUsersResponseItem = zod.object({
   fullName: zod.string(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
   createdAt: zod.string(),
 });
 export const ListUsersResponse = zod.array(ListUsersResponseItem);
@@ -83,6 +85,7 @@ export const CreateUserBody = zod.object({
   fullName: zod.string(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
 });
 
 /**
@@ -99,6 +102,7 @@ export const GetUserResponse = zod.object({
   fullName: zod.string(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
   createdAt: zod.string(),
 });
 
@@ -113,6 +117,7 @@ export const UpdateUserBody = zod.object({
   fullName: zod.string().nullish(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
   password: zod.string().nullish(),
 });
 
@@ -123,6 +128,7 @@ export const UpdateUserResponse = zod.object({
   fullName: zod.string(),
   email: zod.string().nullish(),
   phone: zod.string().nullish(),
+  profileImageUrl: zod.string().nullish(),
   createdAt: zod.string(),
 });
 
@@ -835,6 +841,7 @@ export const ListMaterialsResponseItem = zod.object({
     "worksheet",
     "textbook",
     "video",
+    "record",
     "other",
   ]),
   subjectId: zod.number().nullish(),
@@ -860,6 +867,7 @@ export const CreateMaterialBody = zod.object({
     "worksheet",
     "textbook",
     "video",
+    "record",
     "other",
   ]),
   subjectId: zod.number().nullish(),
