@@ -81,7 +81,7 @@ export default function ParentAttendance() {
         <>
           {myLearners.length > 1 && (
             <Select value={selected || myLearners[0]?.id.toString()} onValueChange={setSelected}>
-              <SelectTrigger className="w-64"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-64"><SelectValue /></SelectTrigger>
               <SelectContent>{myLearners.map(l => <SelectItem key={l.id} value={l.id.toString()}>{l.fullName}</SelectItem>)}</SelectContent>
             </Select>
           )}

@@ -91,9 +91,9 @@ export default function ParentProgress() {
       ) : (
         <>
           {myLearners.length > 1 && (
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Select value={selectedLearner || myLearners[0]?.id.toString()} onValueChange={setSelectedLearner}>
-                <SelectTrigger className="w-64"><SelectValue placeholder="Select learner" /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-64"><SelectValue placeholder="Select learner" /></SelectTrigger>
                 <SelectContent>{myLearners.map(l => <SelectItem key={l.id} value={l.id.toString()}>{l.fullName}</SelectItem>)}</SelectContent>
               </Select>
             </div>

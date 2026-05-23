@@ -7,7 +7,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function Sidebar() {
+type SidebarProps = {
+  className?: string;
+  onNavigate?: () => void;
+};
+
+export function Sidebar({ className, onNavigate }: SidebarProps) {
   const { user } = useAuth();
   const [location] = useLocation();
 
@@ -69,14 +74,14 @@ export function Sidebar() {
   links = [...links, { label: "Profile", href: "/profile", icon: UserRound }];
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border min-h-[100dvh] flex flex-col text-sidebar-foreground">
-      <div className="p-6 border-b border-sidebar-border flex items-center gap-3">
-        <div className="w-8 h-8 rounded bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold">
+    <aside className={cn("w-64 bg-sidebar border-r border-sidebar-border min-h-[100dvh] flex flex-col text-sidebar-foreground", className)}>
+      <div className="p-5 sm:p-6 border-b border-sidebar-border flex items-center gap-3">
+        <div className="w-8 h-8 shrink-0 rounded bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-bold">
           SA
         </div>
-        <h2 className="font-bold text-lg leading-tight">School<br/>Management</h2>
+        <h2 className="font-bold text-lg leading-tight">School<br />Management</h2>
       </div>
-      <nav className="flex-1 py-4 px-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {links.map((link) => {
           const Icon = link.icon;
           const isActive = location === link.href || location.startsWith(link.href + "/");
@@ -84,8 +89,9 @@ export function Sidebar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium",
+                "flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"

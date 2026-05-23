@@ -78,40 +78,40 @@ export default function LandingPage() {
         style={{ backgroundImage: `url(${landingStudents})` }}
       >
         <div className="absolute inset-0 bg-slate-950/55" />
-        <div className="relative mx-auto flex min-h-[70vh] max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-10">
-          <header className="flex items-center justify-between gap-4">
-            <Link href="/" className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-amber-400 font-bold text-slate-950">
+        <div className="relative mx-auto flex min-h-[70vh] w-full max-w-7xl flex-col px-5 py-5 sm:px-8 lg:px-10">
+          <header className="flex w-full max-w-[20rem] items-center justify-between gap-2 sm:max-w-none">
+            <Link href="/" className="flex min-w-0 items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-400 font-bold text-slate-950">
                 SA
               </span>
-              <span className="text-sm font-semibold uppercase text-white/90">
+              <span className="hidden text-sm font-semibold uppercase text-white/90 sm:inline">
                 School Management
               </span>
             </Link>
-            <Button asChild variant="outline" className="border-white/50 bg-white/10 text-white">
+            <Button asChild size="sm" variant="outline" className="shrink-0 border-white/50 bg-white/10 px-2 text-xs text-white sm:min-h-9 sm:px-4 sm:text-sm">
               <Link href={portalHref}>{user ? "Dashboard" : "Portal Login"}</Link>
             </Button>
           </header>
 
           <div className="flex flex-1 items-center py-10">
-            <div className="max-w-3xl">
+            <div className="w-full min-w-0 max-w-3xl">
               <p className="mb-4 text-sm font-semibold uppercase text-amber-300">
                 South African school operations
               </p>
-              <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] sm:text-5xl">
+              <h1 className="max-w-[17rem] break-words text-3xl font-bold leading-tight sm:max-w-3xl sm:text-5xl sm:leading-[1.05]">
                 SA School Management System
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-white/85">
+              <p className="mt-5 max-w-[20rem] text-base leading-7 text-white/85 sm:max-w-2xl">
                 A working portal for administrators, teachers, learners, parents, and accountants to manage daily school work in one place.
               </p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="bg-amber-400 text-slate-950">
+              <div className="mt-7 flex w-full max-w-[20rem] flex-col gap-3 sm:max-w-none sm:flex-row">
+                <Button asChild size="lg" className="w-full bg-amber-400 text-slate-950 sm:w-auto">
                   <Link href={portalHref}>
                     {user ? "Open Dashboard" : "Enter Portal"}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/50 bg-white/10 text-white">
+                <Button asChild size="lg" variant="outline" className="w-full border-white/50 bg-white/10 text-white sm:w-auto">
                   <Link href="/login">Use Demo Account</Link>
                 </Button>
               </div>

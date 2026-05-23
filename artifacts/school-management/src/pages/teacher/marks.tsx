@@ -90,15 +90,15 @@ export default function TeacherMarks() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold">Marks</h1>
-        <Button onClick={() => setOpen(true)}><Plus className="mr-2 h-4 w-4" /> Record Mark</Button>
+        <Button className="w-full sm:w-auto" onClick={() => setOpen(true)}><Plus className="mr-2 h-4 w-4" /> Record Mark</Button>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Label className="shrink-0">Filter by subject:</Label>
         <Select value={filterSubject} onValueChange={setFilterSubject}>
-          <SelectTrigger className="w-64"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-64"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All my subjects</SelectItem>
             {mySubjects.map(s => <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>)}
