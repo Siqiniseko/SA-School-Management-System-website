@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGetTeacherDashboard, getGetTeacherDashboardQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +33,7 @@ type TeacherRecord = {
 };
 
 async function api<T>(url: string): Promise<T> {
-  const response = await fetch(url, { credentials: "include" });
+  const response = await fetch(apiUrl(url), { credentials: "include" });
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`);
   }
@@ -241,7 +242,7 @@ export default function TeacherDashboard() {
                     </div>
                     {record.fileUrl && (
                       <Button asChild variant="ghost" size="sm">
-                        <a href={record.fileUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={apiUrl(record.fileUrl)} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="h-4 w-4" />
                         </a>
                       </Button>

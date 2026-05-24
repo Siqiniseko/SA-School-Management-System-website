@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { LogOut, Menu, User } from "lucide-react";
@@ -35,7 +36,7 @@ export function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
         <Link href="/profile" className="flex min-w-0 items-center gap-2 rounded-md px-1.5 py-1 text-sm hover:bg-muted sm:px-2">
           <div className="w-8 h-8 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary overflow-hidden">
             {user.profileImageUrl ? (
-              <img src={user.profileImageUrl} alt={user.fullName} className="h-full w-full object-cover" />
+              <img src={apiUrl(user.profileImageUrl)} alt={user.fullName} className="h-full w-full object-cover" />
             ) : (
               <User className="w-4 h-4" />
             )}

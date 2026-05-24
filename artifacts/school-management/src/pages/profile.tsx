@@ -5,6 +5,7 @@ import {
   useUpdateUser,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { uploadFile } from "@/lib/uploads";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,7 +62,8 @@ export default function ProfilePage() {
   if (!user) return null;
 
   const previewName = form.fullName || user.fullName;
-  const photoPreview = previewUrl || form.profileImageUrl.trim();
+  const savedPhotoUrl = form.profileImageUrl.trim();
+  const photoPreview = previewUrl || (savedPhotoUrl ? apiUrl(savedPhotoUrl) : "");
   const canShowImage = photoPreview && !imageFailed;
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {

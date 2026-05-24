@@ -9,6 +9,7 @@ import {
   type CreateMaterialBodyType,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { uploadFile } from "@/lib/uploads";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -169,7 +170,7 @@ export default function TeacherRecords() {
                   <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">{fmtDate(record.createdAt)}</span>
                 </div>
                 {record.fileUrl && (
-                  <a href={record.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
+                  <a href={apiUrl(record.fileUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                     <ExternalLink className="h-4 w-4" />
                     Open record
                   </a>

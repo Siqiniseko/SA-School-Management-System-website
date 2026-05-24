@@ -4,6 +4,7 @@ import {
   useListSubjects, useListClasses, getListMaterialsQueryKey,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -115,7 +116,7 @@ export default function TeacherMaterials() {
                     {m.subjectName && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{m.subjectName}</span>}
                   </div>
                   {m.fileUrl && (
-                    <a href={m.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                    <a href={apiUrl(m.fileUrl)} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline">
                       <Link className="h-3 w-3" /> View resource
                     </a>
                   )}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useListClasses, useListSubjects } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -54,7 +55,7 @@ function fmtDate(value: string) {
 }
 
 async function api<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl(url), {
     credentials: "include",
     ...init,
     headers: {

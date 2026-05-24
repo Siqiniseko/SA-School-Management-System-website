@@ -1,6 +1,7 @@
 import React from "react";
 import { useListMaterials, getListMaterialsQueryKey, useListLearners } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
+import { apiUrl } from "@/lib/api-url";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, BookOpen, ClipboardList, Link } from "lucide-react";
@@ -52,7 +53,7 @@ export default function LearnerMaterials() {
                     {m.subjectName && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{m.subjectName}</span>}
                   </div>
                   {m.fileUrl && (
-                    <a href={m.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                    <a href={apiUrl(m.fileUrl)} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline">
                       <Link className="h-3 w-3" /> Open resource
                     </a>
                   )}

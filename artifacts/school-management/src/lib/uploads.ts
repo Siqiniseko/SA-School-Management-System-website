@@ -1,3 +1,5 @@
+import { apiUrl } from "@/lib/api-url";
+
 export type UploadFolder = "profiles" | "records";
 
 export type UploadResult = {
@@ -18,7 +20,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 
 export async function uploadFile(file: File, folder: UploadFolder): Promise<UploadResult> {
   const data = await readFileAsDataUrl(file);
-  const response = await fetch("/api/uploads", {
+  const response = await fetch(apiUrl("/api/uploads"), {
     method: "POST",
     credentials: "include",
     headers: {
