@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import fs from "node:fs/promises";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 const rawPort = process.env.PORT;
@@ -31,6 +32,17 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    {
+      name: "render-spa-fallback",
+      apply: "build",
+      async closeBundle() {
+        const outDir = path.resolve(import.meta.dirname, "dist/public");
+        await fs.copyFile(
+          path.join(outDir, "index.html"),
+          path.join(outDir, "404.html"),
+        );
+      },
+    },
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined

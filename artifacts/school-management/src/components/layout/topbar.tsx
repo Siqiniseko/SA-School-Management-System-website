@@ -2,17 +2,18 @@ import React from "react";
 import { useAuth } from "@/lib/auth";
 import { apiUrl } from "@/lib/api-url";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { LogOut, Menu, User } from "lucide-react";
 
 export function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { user, logout } = useAuth();
+  const [, navigate] = useLocation();
 
   if (!user) return null;
 
   const handleLogout = async () => {
     await logout();
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,7 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const handleLogin = async (u: string, p: string) => {
     setIsSubmitting(true);
@@ -31,7 +32,7 @@ export default function Login() {
         title: `Welcome back, ${res.user.fullName}`,
         description: `Signed in as ${res.user.role}`,
       });
-      window.location.href = `/dashboard/${res.user.role}`;
+      navigate(`/dashboard/${res.user.role}`);
     } catch (error: any) {
       toast({
         title: "Login failed",
