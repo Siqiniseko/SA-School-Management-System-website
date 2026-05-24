@@ -1,3 +1,4 @@
+import { ensureDatabaseSchema } from "@workspace/db";
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedIfEmpty } from "./seed";
@@ -16,10 +17,14 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, () => {
-  logger.info({ port }, "Server listening");
+try {
+  await ensureDatabaseSchema();
+  await seedIfEmpty();
 
-  seedIfEmpty().catch((e) => {
-    logger.error({ err: e }, "Seed failed — server continues running");
+  app.listen(port, () => {
+    logger.info({ port }, "Server listening");
   });
-});
+} catch (e) {
+  logger.error({ err: e }, "Server startup failed");
+  process.exit(1);
+}
